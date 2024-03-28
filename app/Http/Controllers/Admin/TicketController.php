@@ -36,4 +36,52 @@ class TicketController extends Controller
         return view('admin.tickets.index', compact('tickets'));
 
     }
+
+    public function show(string|int $id)
+    {
+        $ticket = Ticket::find($id);
+        if (!$ticket) {
+            return redirect()->back();
+        }
+        
+        return view('admin.tickets.show', compact('ticket'));
+    }
+
+    public function edit(Ticket $ticket, string|int $id)
+    {
+        $ticket = $ticket->where('id', $id)->first();
+        if (!$ticket) {
+            return redirect()->back();
+        }
+        
+        return view('admin.tickets.edit', compact('ticket'));
+    }   
+
+    public function update(Request $request, Ticket $ticket, string|int $id)
+    {
+        $ticket = $ticket->where('id', $id)->first();
+        if (!$ticket) {
+            return redirect()->back();
+        }
+        
+        $data = $request->only(
+            'subject',
+            'message',
+        );
+        $ticket->update($data);
+        
+        return redirect()->route('tickets.index');
+    }
+
+    public function destroy(Ticket $ticket, string|int $id)
+    {
+        $ticket = $ticket->where('id', $id)->first();
+        if (!$ticket) {
+            return redirect()->back();
+        }
+        
+        $ticket->delete();
+        
+        return redirect()->route('tickets.index');
+    }
 }
